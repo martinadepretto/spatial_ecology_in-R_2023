@@ -1,2 +1,7 @@
-# spatial_ecology_in-R_2023
-Repo on the course on spatial ecology in R at UNIBO
+# spatial ecology in R
+
+## Professor
+Duccio Rocchini
+
+## Main scripts in this report
++ script on population
