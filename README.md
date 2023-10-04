@@ -1,4 +1,4 @@
-# spatial ecology in R
+# Spatial ecology in R
 
 ## Professor
 Duccio Rocchini
