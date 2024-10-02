@@ -70,15 +70,19 @@ points(pres, cex=.5)
 
 # final multiframe - par
 par(mfrow=c(2,2))
+
 # elev
 plot(elevmap)
 points(pres, cex=.5)
+
 # temp
 plot(tempmap)
 points(pres, cex=.5)
+
 # vege
 plot(vegemap)
 points(pres, cex=.5)
+
 # prec
 plot(precmap)
 points(pres, cex=.5)
