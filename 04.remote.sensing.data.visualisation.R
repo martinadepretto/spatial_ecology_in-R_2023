@@ -1,5 +1,5 @@
 # RS data
-
+#devtools consents to install packages from Github
 library(devtools) # packages in R are also called libraries
 
 # install the imageRy package from GitHub
@@ -7,41 +7,41 @@ install_github("ducciorocchini/imageRy")  # from devtools
 
 library(imageRy)
 library(terra)
-# in case you have not terra
-# install.packages("terra")
 
-# list the data
+# list the data of the package
 im.list()
 
+#im.import is used to import images
+#we choose to import an image from the imageRy package, specifically the blue band from Sentinel-2
 b2 <- im.import("sentinel.dolomites.b2.tif") 
 
-cl <- colorRampPalette(c("black", "grey", "light grey")) (100)
+#create a vector of colours for our image
+cl <- colorRampPalette(c("black", "grey", "lightgrey")) (100)
 plot(b2, col=cl)
 
+#Do the same with the green, red and NIR bands
 # import the green band from Sentinel-2 (band 3)
 b3 <- im.import("sentinel.dolomites.b3.tif") 
 plot(b3, col=cl)
-
 # import the red band from Sentinel-2 (band 4)
 b4 <- im.import("sentinel.dolomites.b4.tif") 
 plot(b4, col=cl)
-
 # import the NIR band from Sentinel-2 (band 8)
 b8 <- im.import("sentinel.dolomites.b8.tif") 
 plot(b8, col=cl)
 
-# multiframe
+# create a multiframe to see the images together
 par(mfrow=c(2,2))
 plot(b2, col=cl)
 plot(b3, col=cl)
 plot(b4, col=cl)
 plot(b8, col=cl)
 
-# stack images
+# stack the images
 stacksent <- c(b2, b3, b4, b8)
-dev.off() # it closes devices
+dev.off() # it closes off images/graphs
 plot(stacksent, col=cl)
-
+_______________________________________________________
 plot(stacksent[[4]], col=cl)
 
 # Exercise: plot in a multiframe the bands with different color ramps
