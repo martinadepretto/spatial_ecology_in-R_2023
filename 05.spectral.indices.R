@@ -1,16 +1,18 @@
-# vegetation indices
-
+# Vegetation indices
 library(imageRy)
 library(terra)
 
+# list the data of the imageRy package
 im.list()
-
+#we choose and import the 2019 matogrosso image
 m1992 <- im.import("matogrosso_l5_1992219_lrg.jpg")   
-# bands: 1=NIR, 2=RED, 3=GREEN
-im.plotRGB(m1992, r=1, g=2, b=3)
+#use the bands: 1=NIR, 2=RED, 3=GREEN
+im.plotRGB(m1992, r=1, g=2, b=3) #the forest is represented in red, because the color red depicts the NIR reflectance
+#shortcut code
 im.plotRGB(m1992, 1, 2, 3)
-im.plotRGB(m1992, r=2, g=1, b=3)
-im.plotRGB(m1992, r=2, g=3, b=1)
+#let's switch the bands
+im.plotRGB(m1992, r=2, g=1, b=3) #the forest is represented in green and the soil in purple
+im.plotRGB(m1992, r=2, g=3, b=1) #the forest is represented in blue and the soil in yellow
 
 # import the recent image
 m2006 <- im.import("matogrosso_ast_2006209_lrg.jpg")
