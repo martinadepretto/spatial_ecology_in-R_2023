@@ -1,6 +1,6 @@
 #Measurement of RS based variability
 
-#we need these packages
+#we need these packages for the lesson
 library(imageRy)
 library(terra)
 library(viridis) #it's a set of colors
