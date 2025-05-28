@@ -1,1 +1,92 @@
 #SPATIAL ECOLOGY PROJECT
+
+library(terra)
+
+
+# MULTITEMPORAL LAND COVER CHANGE DETECTION FROM 26 SETTEMBER 2018 TO 15 NOVEMBER 2018 FROM SENTINEL 2
+
+## set the working directory
+setwd("/Users/marti/OneDrive/Documenti/R project 2024/spatial project/satellite images/true color")
+
+## import the images in true color both from before and after the storm with the function rast ()
+rast("2018-09-26_Sentinel-2_L1C_True_color.jpg")
+rast("2018-11-15_Sentinel-2_L1C_True_color.jpg")
+
+before_tc <- rast("2018-09-26_Sentinel-2_L1C_True_color.jpg") #true color image from before the storm
+after_tc <- rast("2018-11-15_Sentinel-2_L1C_True_color.jpg") #true color image from after the storm
+
+# Do the same thing with false color
+## set the working directory
+setwd("/Users/marti/OneDrive/Documenti/R project 2024/spatial project/satellite images/false color")
+
+## import the images both from before and after the storm with the function rast ()
+rast("2018-09-26_Sentinel-2_L1C_False_color.jpg")
+rast("2018-11-15_Sentinel-2_L1C_False_color.jpg")
+
+before_fc <- rast("2018-09-26_Sentinel-2_L1C_False_color.jpg") #false color image from before the storm
+after_fc <- rast("2018-11-15_Sentinel-2_L1C_False_color.jpg") #false color image from after the storm
+
+#analyse them
+before_tc
+after_tc
+before_fc
+after_fc
+
+#plot the true color images together
+par(mfrow=c(2,1))
+plot(before_tc)
+plot(after_tc)
+
+#plot the false color images together
+par(mfrow=c(2,1))
+plot(before_fc)
+plot(after_fc)
+
+# select single bands from the image before the storm
+plot(before_tc[[1]]) # red
+plot(before_tc[[2]]) # green
+plot(before_tc[[3]]) # blue
+plot(before_fc[[1]]) # NIR
+dev.off()
+# select single bands from the image after the storm
+plot(after_tc[[1]]) # red
+plot(after_tc[[2]]) # green
+plot(after_tc[[3]]) # blue
+plot(after_fc[[1]]) # NIR
+
+# creating vectors for the colours
+c1 <- colorRampPalette(c("white", "blue", "black")) (100)
+c2 <- colorRampPalette(c("white", "green", "black")) (100)
+c3 <- colorRampPalette(c("white", "red", "black")) (100)
+c4 <- colorRampPalette(c("white", "lightyellow", "tomato", "darkred")) (100)
+
+# assign each colour vector to its corresponding band and put the images together
+## bands from before the storm
+par(mfrow=c(2,2))
+plot(before_tc[[1]], col = c3) # red
+plot(before_tc[[2]], col = c2) # green
+plot(before_tc[[3]], col = c1) # blue
+plot(before_fc[[1]], col = c4) # NIR
+
+##bands from after the storm
+par(mfrow=c(2,2))
+plot(after_tc[[1]], col = c3) # red
+plot(after_tc[[2]], col = c2) # green
+plot(after_tc[[3]], col = c1) # blue
+plot(after_fc[[1]], col = c4) # NIR
+
+# correlation between the bands
+stack_sent_before <- c(before_tc[[1]], before_tc[[2]], before_tc[[3]], before_fc[[1]])
+names(stack_sent_before) <- c("b4_before","b3_before","b2_before","b8_before")
+
+stack_sent_after <- c(after_tc[[1]], after_tc[[2]], after_tc[[3]], after_fc[[1]])
+names(stack_sent_after) <- c("b4_after","b3_after","b2_after","b8_after")
+
+pairs(stack_sent_before)
+pairs(stack_sent_after)
+# Pearson correlation coefficient: the oblique line shows the graphical representation
+# of the bands chosen. Under it, the correlation between the bands are portrayed: 
+# it is higher  between the visible bands, while NIR adds more information. 
+# Over the oblique line, there are the values of the correlation coefficient between 
+# the bands.
+
