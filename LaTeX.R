@@ -1,4 +1,4 @@
-# **Why LaTex**
+# Why LaTex
 
 ## Problems with Word or whatever:
 + Formulas
