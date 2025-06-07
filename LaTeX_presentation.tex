@@ -83,7 +83,7 @@ documentclass{beamer}
 
 \begin{frame}
  \frametitle{Itemizing}
- \begin{itemize}
+ \begin{itemize} %create a list where the n sentences appear gradually in order, creating n different slides
   \item<1-> Remote sensing is a powerful tool
   \item<2-> It can be used for diversity estimate
   \item<3-> It can be used in ecological informatics
@@ -161,7 +161,7 @@ documentclass{beamer}
 \begin{frame}{More difficult formulas...}
 Let's experience the easiness of writing difficult formulas:
 \begin{equation}
-K_{\alpha}=\frac{1}{\left( \sum_{i=1}^{N} p_i \times p_i^{\alpha-1} \right)^{\frac{1}{\alpha-1}}} 
+K_{\alpha}=\frac{1}{\left( \sum_{i=1}^{N} p_i \times p_i^{\alpha-1} \right)^{\frac{1}{\alpha-1}}} % \left( means open bracket      % \right) means close brackets
 \end{equation}
 \end{frame}
 
@@ -198,7 +198,7 @@ $H' = - \sum_{i=1}^{N} p_i \times \log{p_i}$ and blablabla again
     This is the function of R we are using, where:
     \begin{itemize}
         \item x = input file...
-        \item $\alpha$ = blablabla
+        \item $\alpha$ = blablabla % way to write a symbol:  $\symbol$
     \end{itemize}
 \end{frame}
 
@@ -209,7 +209,8 @@ $H' = - \sum_{i=1}^{N} p_i \times \log{p_i}$ and blablabla again
     \bigskip
     \includegraphics[width=0.7 \textwidth]{andromeda.png}
 \end{frame}
-\begin{frame}{Columns in beamer}
+
+\begin{frame}{Columns in beamer} # write down in columns
     \begin{columns}
         \column{0.5\textwidth}
         \centering
