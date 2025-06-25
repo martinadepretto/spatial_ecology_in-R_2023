@@ -1,31 +1,31 @@
 #SPATIAL ECOLOGY PROJECT
 library(terra)
 
-# MULTITEMPORAL LAND COVER CHANGE DETECTION BEFORE THE VAIA STORM (26th SEPTEMBER 2018) 
-## AND AFTER THE EVENT (21st SEPTEMBER 2019) FROM SENTINEL 2
+#MULTITEMPORAL LAND COVER CHANGE DETECTION BEFORE THE VAIA STORM (26th SEPTEMBER 2018) 
+#AND AFTER THE EVENT (21st SEPTEMBER 2019) FROM SENTINEL 2
 
-## set the working directory
+#set the working directory
 setwd("/Users/marti/OneDrive/Documenti/R project 2024/spatial project/satellite images/true color")
 
-## import the images in true color both from before and after the storm with the function rast ()
+#import the images in true color both from before and after the storm with the function rast ()
 rast("2018-09-26_Sentinel-2_L2A_True_color.jpg") #we need the package "terra" to work with raster data
 rast("2019-09-21_Sentinel-2_L2A_True_color.jpg")
 before_tc <- rast("2018-09-26_Sentinel-2_L2A_True_color.jpg") #true color image from before the storm
 after_tc <- rast("2019-09-21_Sentinel-2_L2A_True_color.jpg") #true color image from after the storm
 
-# Do the same thing with false color
-## set the working directory
+#Do the same thing with false color
+#set the working directory
 setwd("/Users/marti/OneDrive/Documenti/R project 2024/spatial project/satellite images/false color")
 
-## import the images both from before and after the storm with the function rast ()
+#import the images both from before and after the storm with the function rast ()
 rast("2018-09-26_Sentinel-2_L2A_False_color.jpg")
 rast("2019-09-21_Sentinel-2_L2A_False_color.jpg")
 before_fc <- rast("2018-09-26_Sentinel-2_L2A_False_color.jpg") #false color image from before the storm
 after_fc <- rast("2019-09-21_Sentinel-2_L2A_False_color.jpg") #false color image from after the storm
 
-# analyse them
+#analyse them
 before_tc
-## modify the "names" row with the names of the RGB colour
+#modify the "names" row with the names of the RGB colors
 names(before_tc) <- c("RED", "GREEN", "BLUE")
 after_tc
 names(after_tc) <- c("RED", "GREEN", "BLUE")
@@ -45,100 +45,100 @@ plot(before_fc)
 plot(after_fc)
 
 dev.off()
-# select single bands from the image before the storm
+#select single bands from the image before the storm
 plot(before_tc[[1]], main = "RED") # red
 plot(before_tc[[2]], main = "GREEN") # green
 plot(before_tc[[3]], main = "BLUE") # blue
 plot(before_fc[[1]], main = "NIR") # NIR
 
-# select single bands from the image after the storm
+#select single bands from the image after the storm
 plot(after_tc[[1]], main = "RED") # red
 plot(after_tc[[2]], main = "GREEN") # green
 plot(after_tc[[3]], main = "BLUE") # blue
 plot(after_fc[[1]], main = "NIR") # NIR
 
-# creating vectors for the colours
+#creating vectors for the colours
 c1 <- colorRampPalette(c("white", "blue", "black")) (100)
 c2 <- colorRampPalette(c("white", "green", "black")) (100)
 c3 <- colorRampPalette(c("white", "red", "black")) (100)
 c4 <- colorRampPalette(c("white", "lightyellow", "tomato", "darkred")) (100)
 
-# assign each color vector to its corresponding band and put the images together
-## bands from before the storm
+#assign each color vector to its corresponding band and put the images together
+#bands from before the storm
 par(mfrow=c(2,2))
 plot(before_tc[[1]], main = "RED", col = c3) # red
 plot(before_tc[[2]], main = "GREEN", col = c2) # green
 plot(before_tc[[3]], main = "BLUE", col = c1) # blue
 plot(before_fc[[1]], main = "NIR", col = c4) # NIR
 
-##bands from after the storm
+#bands from after the storm
 par(mfrow=c(2,2))
 plot(after_tc[[1]], main = "RED", col = c3) # red
 plot(after_tc[[2]], main = "GREEN", col = c2) # green
 plot(after_tc[[3]], main = "BLUE", col = c1) # blue
 plot(after_fc[[1]], main = "NIR", col = c4) # NIR
 
-# Let's see how the red band changes before and after the storm
-## remember that the vegetation absorbs red light, so
-### low values of red light mean thick vegetation
+#Let's see how the red band changes before and after the storm
+#remember that the vegetation absorbs red light, so
+#low values of red light mean thick vegetation
 par(mfrow=c(2,1))
 plot(before_tc[[1]], main = "RED before the storm", col = c3) #low values of red light before the storm visualized by the white color
 plot(after_tc[[1]], main = "RED after the storm", col = c3) #high values of red light after the storm visualized by the dark red/black color
 
 #the NIR light instead has the opposite behavior
-## the vegetation reflects the NIR light, so
-### high values of NIR light mean thick vegetation
+#the vegetation reflects the NIR light, so
+#high values of NIR light mean thick vegetation
 par(mfrow=c(2,1))
 plot(before_fc[[1]], main = "NIR before the storm", col = c4) # NIR
 plot(after_fc[[1]], main = "NIR after the storm", col = c4) # NIR
 #there is not much difference between the two images, 
-## rather it seems that the image after the storm has higher values of NIR.
-### It could be because herbs are already growing in the open spots and they could already be reflecting the NIR light.
+#rather it seems that the image after the storm has higher values of NIR.
+#It could be because herbs are already growing in the open spots and already reflecting the NIR light.
 
 dev.off()
 
 
 #############################################################################################
-# CORRELATION BETWEEN THE BANDS
-# Correlation between the bands: light shows a specific behavior if the vegetation is healthy
+#CORRELATION BETWEEN THE BANDS
+#Correlation between the bands: light shows a specific behavior if the vegetation is healthy
 stack_sent_before <- c(before_tc[[1]], before_tc[[2]], before_tc[[3]], before_fc[[1]])
 names(stack_sent_before) <- c("b4_before","b3_before","b2_before","b8_before")
 stack_sent_after <- c(after_tc[[1]], after_tc[[2]], after_tc[[3]], after_fc[[1]])
 names(stack_sent_after) <- c("b4_after","b3_after","b2_after","b8_after")
 
-# correlation before the storm
+#correlation before the storm
 pairs(stack_sent_before)
-# red and green light present an high correlation (=0.97).
-## usually, the correlation between red and green light is high when the vegetation is stressed.
-# the correlation between NIR and red should be low when the vegetation is healthy; in our case the correlation is 0.66, so medium high.
+#red and green light present an high correlation (=0.97).
+#usually, the correlation between red and green light is high when the vegetation is stressed.
+#the correlation between NIR and red should be low when the vegetation is healthy; in our case the correlation is 0.66, so medium high.
 
-# correlation after the storm
+#correlation after the storm
 pairs(stack_sent_after)
-# red and green light present an high correlation (=0.96).
-## the correlation between NIR and red after the storm is 0.45, lower than before.
-# From the correlation between the different band, the situation seems to improve after the storm.
-## We should remember that the image we used to analyze the situation after the storm was taken a year later, a time sufficient for herbs to grow.
-# Probably this method is not the right one to show how the vegetation was affected by the storm.
+#red and green light present an high correlation (=0.96).
+#the correlation between NIR and red after the storm is 0.45, lower than before.
+#From the correlation between the different band, the situation seems to improve after the storm.
+#We should remember that the image we used to analyze the situation after the storm was taken a year later, a time sufficient for herbs to grow.
+#Probably this method is not the right one to show how the vegetation was affected by the storm.
 
 
 #############################################################################################
-# VEGETATION INDEXES
-# Difference Vegetation Index: DVI = NIR - RED
-# High DVI = thick vegetation; Low DVI (around 0) = scarce vegetation
-# DVI before the storm
+#VEGETATION INDEXES
+#Difference Vegetation Index: DVI = NIR - RED
+#High DVI = thick vegetation; Low DVI (around 0) = scarce vegetation
+#DVI before the storm
 dvi_before = before_fc[[1]] - before_tc[[1]] 
 names(dvi_before) <- "DVI"
 plot(dvi_before, main = "DVI_before")
-# DVI after the storm
+#DVI after the storm
 dvi_after = after_fc[[1]] - after_tc[[1]] 
 names(dvi_after) <- "DVI"
 plot(dvi_after, main = "DVI_after")
 
-# let's change the palette
+#let's change the palette
 library(viridisLite) 
 library(viridis) #packages with colorblind-friendly color maps
 cl1 <- colorRampPalette (c("darkgoldenrod4", "lightyellow","darkslategrey")) (100)
-# put the images together with the new palette
+#put the images together with the new palette
 par(mfrow=c(2,1))
 plot(dvi_before, main = "DVI_before", col=cl1)
 plot(dvi_after, main = "DVI_after", col=cl1) 
@@ -146,89 +146,79 @@ plot(dvi_after, main = "DVI_after", col=cl1)
 
 dev.off()
 
-# Normalized Difference Vegetation Index: NDVI = NIR - RED/ NIR + RED
+#Normalized Difference Vegetation Index: NDVI = NIR - RED/ NIR + RED
 ## useful to compare different images; 
-## NDVI cab be: -1 < NDVI < +1; NDVI=1 -> thick vegetation; NDVI=-1 -> water/snow; NDVI=0 -> bare soil
-# NDVI from before the storm
+##NDVI can be: -1 < NDVI < +1; NDVI=1 -> thick vegetation; NDVI=-1 -> water/snow; NDVI=0 -> bare soil
+#NDVI from before the storm
 ndvi_before = (before_fc[[1]] - before_tc[[1]]) / (before_fc[[1]] + before_tc[[1]])
 names(ndvi_before) <- "NDVI"
 plot(ndvi_before)
 plot(ndvi_before, col = cl1, main = "NDVI before the storm", cex.main = 1)
-# NDVI from after the storm
+#NDVI from after the storm
 ndvi_after = (after_fc[[1]] - after_tc[[1]]) / (after_fc[[1]] + after_tc[[1]])
 names(ndvi_after) <- "NDVI"
 plot(ndvi_after)
 plot(ndvi_after, col = cl1, main = "NDVI after the storm", cex.main = 1)
-# plot them together
+#plot them together
 par(mfrow=c(2,1))
 plot(ndvi_before, col = cl1, main = "NDVI before the storm", cex.main = 1)
 plot(ndvi_after, col = cl1, main = "NDVI after the storm", cex.main = 1) 
-# we can see how much the Vaia storm has hit this area: the image below shows more yellowish parts, 
-# representing NDVI values around 0, that indicate more spots with bare soil and more stressed vegetation, compared to the image above.
+#we can see how much the Vaia storm has hit this area: the image below shows more yellowish parts, 
+#representing NDVI values around 0, that indicate more spots with bare soil and more stressed vegetation, compared to the image above.
 
 dev.off()
 
 
 #############################################################################################
-# CLASSIFICATION OF VEGETATION USING NDVI OVER TIME
+#CLASSIFICATION OF VEGETATION USING NDVI OVER TIME
 library(terra)
 
-# let's look at how the data is distributed
+#let's look at how the data is distributed
 quantile(values(ndvi_before), na.rm = T)
 hist(values(ndvi_before))
-# the data is negative skewed
+#the data is negative skewed
 
-# Classify the data in 3 groups using known ecological thresholds
-# https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/ndvi/
-## https://www.usgs.gov/special-topics/remote-sensing-phenology/science/ndvi-foundation-remote-sensing-phenology
+#Classify the data in 3 groups using known ecological thresholds
+#https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/ndvi/
+#https://www.usgs.gov/special-topics/remote-sensing-phenology/science/ndvi-foundation-remote-sensing-phenology
 ndvi_before_class <- classify(ndvi_before, 
                               rcl = matrix(c(-Inf, 0.2,  1,     # first class: "Absent"
                                              0.2,  0.5,  2,     # second class: "Stressed"
                                              0.5,  Inf,  3),    # third class: "Healthy"
                                            ncol = 3, byrow = TRUE))
 rcl
-# name the groups
+#name the groups
 class_names <- c("Absent", "Stressed", "Healthy")
 
-# plot the raster with the classification
+#plot the raster with the classification
 plot(ndvi_before_class, col = c("darkgrey", "blue", "darkgreen"),
      main = "Veg classes before the storm",
      type = "classes", 
      levels = class_names)
 
-
-# Do the same with the NDVI after the storm
-# calculate the min e max value 
-min_val <- min(values(ndvi_after), na.rm = TRUE)
-max_val <- max(values(ndvi_after), na.rm = TRUE)
-# Normalized values of NDVI
-n_ndvi_after <- (ndvi_after - min_val) / (max_val - min_val)
-head((values(n_ndvi_after)))
-# Plot them: the normalized values are still in a raster
-plot(ndvi_after, main = "NDVI after the storm")
-
-# let's look at how the data is distributed
+#Do the same with the NDVI after the storm
+#let's look at how the data is distributed
 quantile(values(ndvi_after), na.rm = T)
 hist(values(ndvi_after))
-# the data is negative skewed
+#the data is negative skewed
 
-# Classify the data in 3 groups
+#Classify the data in 3 groups
 ndvi_after_class <- classify(ndvi_after, 
                              rcl = matrix(c(-Inf, 0.2,  1,     # first class: "Absent"
                                             0.2,  0.5,  2,     # second class: "Stressed"
                                             0.5,  Inf,  3),    # third class: "Healthy"
                                           ncol = 3, byrow = TRUE))
 rcl
-# name the groups
+#name the groups
 class_names <- c("Absent", "Stressed", "Healthy")
 
-# plot the raster with the classification
+#plot the raster with the classification
 plot(ndvi_after_class, col = c("darkgrey", "blue", "darkgreen"),
      main = "Veg classes after the storm",
      type = "classes", 
      levels = class_names)
 
-## compare by plotting the images together
+#compare by plotting the images together
 par(mfrow=c(2,1))
 plot(ndvi_before_class, col = c("darkgrey", "blue", "darkgreen"),
      main = "Veg classes before the storm", 
@@ -237,48 +227,45 @@ plot(ndvi_after_class, col = c("darkgrey", "blue", "darkgreen"),
      main = "Veg classes after the storm",
      type = "classes", levels = class_names)
 
-
-
-# Proportion of the classes
-# calculate the frequencies for each class
+#Proportion of the classes
+#calculate the frequencies for each class
 f_before <- freq(ndvi_before_class)
 f_before
 f_after <- freq(ndvi_after_class)
 f_after
 
-# calculate the total number of pixels
+#calculate the total number of pixels
 tot_before <- ncell(ndvi_before_class)
 tot_before
 tot_after<-ncell(ndvi_after_class)
 tot_after
 
-# calculate the percentage for each class
+#calculate the percentage for each class
 p_before <- f_before * 100 / tot_before
 p_before
 p_after <- f_after * 100 / tot_after
 p_after
-# In conclusion, before the storm vegetation classes had the following proportions:
-## absent = 3.077703 %, stressed = 36.008892 %, healthy = 60.913405 %. After the storm, 
-### the proportions were: absent = 20.01797 %, stressed = 43.39538 %, healthy = 36.58665 %.
+#In conclusion, before the storm vegetation classes had the following proportions:
+#absent = 3.077703 %, stressed = 36.008892 %, healthy = 60.913405 %. After the storm, 
+#the proportions were: absent = 20.01797 %, stressed = 43.39538 %, healthy = 36.58665 %.
 
-
-# Show the data in tables
-# build the columns
+#Show the data in tables
+#build the columns
 class <- c("absent", "stressed", "healthy")
 before <- c(3, 36, 61) 
 after <- c(20, 43, 37) 
-# create a table
+#create a table
 tab <- data.frame(class, before, after)
 View(tab)
 
 write.csv(tab, "veg_classes.csv", row.names = FALSE)
 
-# sort the class vector as a factor
+#sort the class vector as a factor
 tab$class <- factor(tab$class, levels = c("absent", "stressed", "healthy"))
-# create a vector containing the colors used before
+#create a vector containing the colors used before
 colors <- c("absent" = "darkgrey", "stressed" = "blue", "healthy" = "forestgreen")
 
-# create the barplot using the package ggplot
+#create the barplot using the package ggplot
 library(ggplot2)
 p1<- ggplot(tab, aes(x=class, y=before, fill = class)) + 
   geom_bar(stat="identity", color = "black") + ylim(0,65) +
@@ -298,7 +285,7 @@ p2<- ggplot(tab, aes(x=class, y=after, fill = class)) +
   theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size = 10)) 
 p2 #barplot after the storm
 
-# use the package patchwork to visualize the two barplots together
+#use the package patchwork to visualize the two barplots together
 library(patchwork)
 p1+p2
 
@@ -306,30 +293,30 @@ dev.off()
 
 
 #############################################################################################
-# MOVING WINDOW APPROACH FOR DIVERSITY ASSESSMENT: focal() function
-# 1st case: calculating the sd in a 3x3 matrix with nir band (before_fc[[1]])
+#MOVING WINDOW APPROACH FOR DIVERSITY ASSESSMENT: focal() function
+#1st case: calculating the sd in a 3x3 matrix with NIR band (before_fc[[1]])
 cl2 <- colorRampPalette (c("oldlace", "darkslateblue", "blue4")) (100)
 sd3_before <- focal(before_fc[[1]], matrix(1/9,3,3), fun=sd)
 plot(sd3_before)
 plot(sd3_before, col=cl2, main = "Variability (sd3) of the land before the storm", cex.main = .8) 
-# higher variability in the NIR reflectance (in blue) associated with an higher variability in the geomorphology.
-# high standard deviation means that the light signal catches a multitude of information,
-# meaning that an high geological variability is present.
+#higher variability in the NIR reflectance (in blue) associated with an higher variability in the geomorphology.
+#high standard deviation means that the light signal catches a multitude of information,
+#meaning that an high geological variability is present.
 
-# do the same with the image after the storm
+#do the same with the image after the storm
 sd3_after <- focal(after_fc[[1]], matrix(1/9,3,3), fun=sd)
 plot(sd3_after)
 plot(sd3_after, col=cl2, main = "Variability (sd3) of the land after the storm", cex.main = .8) 
 
-# plot them together
+#plot them together
 par(mfrow=c(2,1))
 plot(sd3_before, col=cl2, main = "Variability (sd3) of the land before the storm", cex.main = .8) 
 plot(sd3_after, col=cl2, main = "Variability (sd3) of the land after the storm", cex.main = .8) 
-# the study area remained quite unchanged over time, showing an overall homogeneous aspect
+#the study area remained quite unchanged over time, showing an overall homogeneous aspect
 
 dev.off()
 
-# 2st case: calculating the sd in a 7x7 matrix with nir band (before_fc[[1]])
+#2st case: calculating the sd in a 7x7 matrix with NIR band (before_fc[[1]])
 sd7_before <- focal(before_fc[[1]], matrix(1/49, 7, 7), fun=sd)
 plot(sd7_before)
 plot(sd7_before, col=cl2, main = "Variability (sd7) of the land before the storm", cex.main = .8) 
@@ -342,15 +329,15 @@ par(mfrow=c(2,1))
 plot(sd7_before, col=cl2, main = "Variability (sd7) of the land before the storm", cex.main = .8) 
 plot(sd7_after, col=cl2, main = "Variability (sd7) of the land after the storm", cex.main = .8) 
 
-# plot  the 3x3 and the 7x7 standard deviation together
-# before the storm
+#plot the 3x3 and the 7x7 standard deviation together
+#before the storm
 par(mfrow=c(2,1))
 plot(sd3_before, col=cl2, main = "Variability (sd3) of the land before the storm", cex.main = .8) 
 plot(sd7_before, col=cl2, main = "Variability (sd7) of the land before the storm", cex.main = .8) 
-# the 3x3 window catches small local differences: the differences between pixels are more evident and the sd calculations are higher; 
-# the 7x7 window is larger and has more pixels, so it can detect medium differences on a larger area; the small differences in sd are mitigated, so the values are lower.
+#the 3x3 window catches small local differences: the differences between pixels are more evident and the sd calculations are higher; 
+#the 7x7 window is larger and has more pixels, so it can detect medium differences on a larger area; the small differences in sd are mitigated, so the values are lower.
 
-# after the storm
+#after the storm
 par(mfrow=c(2,1))
 plot(sd3_after, col=cl2, main = "Variability (sd3) of the land after the storm", cex.main = .8) 
 plot(sd7_after, col=cl2, main = "Variability (sd7) of the land after the storm", cex.main = .8) 
@@ -364,153 +351,149 @@ plot(sd7_after, col=cl2, main = "Variability (sd7) of the land after the storm",
 
 
 #3rd case: PCA -> calculating the sd in a 3x3 matrix with PC1 
-# MULTIVARIATE ANALYSIS (Principal Component Analysis): compacting the 3 bands of sentinel-2 into one to better visualize it
-# calculate the pca for the image before the storm
+#MULTIVARIATE ANALYSIS (Principal Component Analysis): compacting the 3 bands of sentinel-2 into one to better visualize it
+#calculate the PCA for the image before the storm
 library(imageRy)
 
 im.pca(before_fc)
 sentpc_before <- im.pca(before_fc) 
-# PC1 represents 50 % of the variability
-# create a new set of colors
+#PC1 represents 50 % of the variability
+#create a new set of colors
 viridisc <- colorRampPalette(viridis(7))(255)
-# plot only the first principal component
+#plot only the first principal component
 plot(sentpc_before$PC1, main = "PC1_before", col = viridisc)
 
-# do the same with the image after the storm
+#do the same with the image after the storm
 im.pca(after_fc)
 sentpc_after <- im.pca(after_fc)
-# PC1 represents 56 % of the variability
+#PC1 represents 56 % of the variability
 plot(sentpc_after$PC1, main = "PC1_after", col = viridisc) 
 
-# calculate sd of pc1 in a 3x3 matrix
-# before
+#calculate sd of pc1 in a 3x3 matrix
+#before the storm
 pc1sd3_before <- focal(sentpc_before$PC1, matrix(1/9,3,3), fun=sd)
 plot(pc1sd3_before, col=cl2, main = "Variability of the land before the storm (sd3_PC1)", cex.main = .9)
-# after
+#after the storm
 pc1sd3_after <- focal(sentpc_after$PC1, matrix(1/9,3,3), fun=sd)
 plot(pc1sd3_after, col=cl2, main = "Variability of the land after the storm (sd3_PC1)", cex.main = .9)
 
-
-
-# multiframe
+#multiframe
 par(mfrow=c(3,2))
-im.plotRGB(before_fc, 2,1,3) # variability of the land before the storm using false color 
+im.plotRGB(before_fc, 2,1,3) #variability of the land before the storm using false color 
 #r=red, g=nir, b=green -> the forest is represented in green and the bare soil in purple, to better represent the vegetation
 im.plotRGB(after_fc, 2,1,3)
-# variability of the land after the storm using false color
+#variability of the land after the storm using false color
 plot(sd3_before, col=cl2, main = "Variability of the land before the storm (sd3)", cex.main = .9) 
 plot(sd3_after, col=cl2, main = "Variability of the land after the storm (sd3)", cex.main = .9) 
 plot(pc1sd3_before, col=cl2, main = "Variability of the land before the storm (sd3_PC1)", cex.main = .9)
 plot(pc1sd3_after, col=cl2, main = "Variability of the land after the storm (sd3_PC1)", cex.main = .9)
-# the difference in variability of the land revealed by the sd3 and pc1 from before and after the storm is small:
-# few more values near zero (in white) in the images after the storm, representing less variability of the land in those spots,
-# probably because the soil without vegetation was eroded and it became more uniform
+#the difference in variability of the land revealed by the sd3 and pc1 from before and after the storm is small:
+#few more values near zero (in white) in the images after the storm, representing less variability of the land in those spots,
+#probably because the soil without vegetation was eroded and it became more uniform
 
 dev.off()
 
 #############################################################################################
-# Normalized Difference Moisture Index (NDMI): to determine vegetation water content. 
-## The value range of the NDMI is -1 to 1. Negative values of NDMI correspond to barren soil. 
-## Values around zero (-0.2 to 0.4) generally correspond to water stress. 
-## High, positive values represent high canopy without water stress (approximately 0.4 to 1).
-# set the working directory
+#Normalized Difference Moisture Index (NDMI): to determine vegetation water content. 
+#The value range of the NDMI is from -1 to 1. Negative values of NDMI correspond to barren soil. 
+#Values around zero (-0.2 to 0.4) generally correspond to water stress. 
+#High, positive values represent high canopy without water stress (approximately 0.4 to 1).
+#set the working directory
 setwd("/Users/marti/OneDrive/Documenti/R project 2024/spatial project/satellite images/moisture")
-## import the images from before and after the storm 
+#import the images from before and after the storm 
 moisture_before <- rast("2018-09-26_Sentinel-2_L2A_Moisture_index.jpg")
 moisture_after <- rast("2019-09-21_Sentinel-2_L2A_Moisture_index.jpg")
 
-# plot the image together
+#plot the image together
 par(mfrow=c(2,1))
 plot(moisture_before, main = "Vegetation water content before the storm")
 plot(moisture_after, main = "Vegetation water content after the storm")
-# red/yellow parts correspond to values around 0.2-0 -> no developed canopy and water stress
-# blue parts correspond to values higher than 0.3 -> high canopy without water stress
+#red/yellow parts correspond to values around 0.2-0 -> no developed canopy and water stress
+#blue parts correspond to values higher than 0.3 -> high canopy without water stress
 
 
-
-#################################################################################à
+#############################################################################################
 #HOW IS THE SITUATION NOW?
 
-## set the working directory
+##set the working directory
 setwd("/Users/marti/OneDrive/Documenti/R project 2024/spatial project/satellite images/true color")
-## import the image in true color
+#import the image in true color
 rast("2024-07-31_Sentinel-2_L2A_True_color.jpg")
 tc_2024 <- rast("2024-07-31_Sentinel-2_L2A_True_color.jpg")
 
-## set the working directory
+#set the working directory
 setwd("/Users/marti/OneDrive/Documenti/R project 2024/spatial project/satellite images/false color")
-## import the image in false color
+#import the image in false color
 rast("2024-07-31_Sentinel-2_L2A_False_color.jpg")
 fc_2024 <- rast("2024-07-31_Sentinel-2_L2A_False_color.jpg")
 
 names(tc_2024) <- c("RED", "GREEN", "BLUE")
 names(fc_2024) <- c("NIR", "RED", "GREEN")
 
-# plot them together
+#plot them together
 par(mfrow=c(2,1))
 plot(tc_2024)
 plot(fc_2024)
 
-# red band over time (from 2019 to 2024)
+#RED band over time (from 2019 to 2024)
 par(mfrow=c(2,1))
 plot(after_tc[[1]], main = "RED_2019", col = c3) 
 plot(tc_2024[[1]], main = "RED_2024", col = c3)
-# medium-high values of red light all around in 2024 image, even in spaces where the values were low even after the storm
+#medium-high values of red light everywhere in 2024 image, even in spaces where the values were low in the after the storm image
 
-# NIR band over time (from 2019 to 2024)
+#NIR band over time (from 2019 to 2024)
 par(mfrow=c(2,1))
 plot(after_fc[[1]], main = "NIR_2019", col = c4) 
 plot(fc_2024[[1]], main = "NIR_2024", col = c4) 
-# higher values of NIR light in 2024 image. 
-# It seems that herbs and small plants are growing in the open spots left by the storm.
+#higher values of NIR light in 2024 image. 
+#It seems that herbs and small plants are growing in the open spots left by the storm.
 
 dev.off()
 
-# Normalized Difference Vegetation Index: NDVI = NIR - RED/ NIR + RED
-## NDVI cab be: -1 < NDVI < +1; NDVI=1 -> thick vegetation; NDVI=-1 -> water/snow; NDVI=0 -> bare soil
-# NDVI in 2024
+#Normalized Difference Vegetation Index: NDVI = NIR - RED/ NIR + RED
+#NDVI in 2024
 ndvi_2024 = (fc_2024[[1]] - tc_2024[[1]]) / (fc_2024[[1]] + tc_2024[[1]])
 names(ndvi_2024) <- "NDVI"
 plot(ndvi_2024)
 plot(ndvi_2024, col = cl1, main = "NDVI_2024", cex.main = 1)
 
-# plot the NIR from after the storm and from 2024 together
+#plot the NIR from after the storm and from 2024 together
 par(mfrow=c(2,1))
 plot(ndvi_after, col = cl1, main = "NDVI_2019", cex.main = 1) 
 plot(ndvi_2024, col = cl1, main = "NDVI_2024", cex.main = 1)
-# we can see how the situation seems better in some areas, such as the areas most hit by the 
-# storm, and less in some others. In general, the image above shows more yellowish parts, 
-# representing NDVI values around 0, that indicate more spots with bare soil and more 
-# stressed vegetation, compared to the image below where more greenish spots are present.
+#we can see how the situation seems better in some areas, like the ones most hit by the 
+#storm, and less in some others. In general, the image above shows more yellowish parts, 
+#representing NDVI values around 0, that indicate more spots with bare soil and more 
+#stressed vegetation, compared to the image below where more greenish spots are present.
 
 dev.off()
 
-# CLASSIFICATION OF VEGETATION USING NDVI OVER TIME
+#CLASSIFICATION OF VEGETATION USING NDVI OVER TIME
 library(terra)
 
-# let's look at how the data is distributed
+#let's look at how the data is distributed
 quantile(values(ndvi_2024), na.rm = T)
 hist(values(ndvi_2024))
-# the data is negative skewed
+#the data is negative skewed
 
-# Classify the data in 3 groups using known ecological thresholds
-# https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/ndvi/
-## https://www.usgs.gov/special-topics/remote-sensing-phenology/science/ndvi-foundation-remote-sensing-phenology
-# create the matrix with the chosen thresholds
+#Classify the data in 3 groups using known ecological thresholds
+#https://custom-scripts.sentinel-hub.com/custom-scripts/sentinel-2/ndvi/
+#https://www.usgs.gov/special-topics/remote-sensing-phenology/science/ndvi-foundation-remote-sensing-phenology
+#create the matrix with the chosen thresholds
 rcl = matrix(c(-Inf, 0.2,  1,     # first class: "Absent"
                0.2,  0.5,  2,     # second class: "Stressed"
                0.5,  Inf,  3),    # third class: "Healthy"
              ncol = 3, byrow = TRUE)
 ndvi_2024_class <- classify(ndvi_2024, rcl)
-# name the groups
+#name the groups
 class_names <- c("Absent", "Stressed", "Healthy")
 
-# plot the raster with the classification
+#plot the raster with the classification
 plot(ndvi_2024_class, col = c("darkgrey", "blue", "darkgreen"),
      main = "Veg classes in 2024", 
      type = "classes", levels = class_names)
 
-# compare with the situation after the storm by plotting the images together
+#compare with the situation after the storm by plotting the images together
 par(mfrow=c(2,1))
 plot(ndvi_after_class, col = c("darkgrey", "blue", "darkgreen"),
      main = "Veg classes in 2019",
@@ -519,47 +502,46 @@ plot(ndvi_2024_class, col = c("darkgrey", "blue", "darkgreen"),
      main = "Veg classes in 2024", 
      type = "classes", levels = class_names)
 
-# Proportion of the classes
-# calculate the frequencies for each class
+#Proportion of the classes
+#calculate the frequencies for each class
 f_2024 <- freq(ndvi_2024_class)
 f_2024
 f_after <- freq(ndvi_after_class)
 f_after
 
-# calculate the total number of pixels
+#calculate the total number of pixels
 tot_2024 <- ncell(ndvi_2024_class)
 tot_2024
 tot_after<-ncell(ndvi_after_class)
 tot_after
 
-# calculate the percentage for each class
+#calculate the percentage for each class
 p_after <- f_after * 100 / tot_after
 p_after
 p_2024 <- f_2024 * 100 / tot_2024
 p_2024
-# In conclusion, after the storm vegetation classes had the following proportions:
-# absent = 20.01797 %, stressed = 43.39538 %, healthy = 36.58665 %. Now the proportions are:
-# absent = 9.465318 %, stressed = 54.325831 %, healthy = 36.208851 %. 
-# It seems that a 7% of the stressed part has become healthy -> improvement by 7%
+#In conclusion, after the storm vegetation classes had the following proportions:
+#absent = 20.01797 %, stressed = 43.39538 %, healthy = 36.58665 %. Now the proportions are:
+#absent = 9.465318 %, stressed = 54.325831 %, healthy = 36.208851 %. 
+#It seems that around 10% of the absent part has become stressed -> little improvement.
 
-
-# Show the data in tables
-# build the columns
+#Show the data in tables
+#build the columns
 class <- c("absent", "stressed", "healthy")
 after <- c(20, 43, 37) 
 now <- c(10, 54, 36) 
-# create a table
+#create a table
 tab2 <- data.frame(class, after, now)
 tab2
 
 write.csv(tab2, "veg_classes_2024.csv", row.names = FALSE)
 
-# sort the class vector as a factor
+#sort the class vector as a factor
 tab2$class <- factor(tab2$class, levels = c("absent", "stressed", "healthy"))
 # create a vector containing the colors used before
 colors <- c("absent" = "darkgrey", "stressed" = "blue", "healthy" = "forestgreen")
 
-# create the barplot using the package ggplot
+#create the barplot using the package ggplot
 library(ggplot2)
 p1<- ggplot(tab2, aes(x=class, y=now, fill = class)) + 
   geom_bar(stat="identity", color = "black") + ylim(0,55) +
@@ -579,40 +561,40 @@ p2<- ggplot(tab, aes(x=class, y=after, fill = class)) +
   theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(size = 10)) 
 p2 #barplot in 2019
 
-# use the package patchwork to visualize the two barplots together
+#use the package patchwork to visualize the two barplots together
 library(patchwork)
 p2+p1
 
 dev.off()
 
-#### PCA ##########
-# calculate the sd in a 3x3 matrix with nir band in 2024
+#PCA 
+#calculate the sd in a 3x3 matrix with NIR band in 2024
 sd3_2024 <- focal(fc_2024[[1]], matrix(1/9,3,3), fun=sd)
 plot(sd3_2024, col=cl2, main = "Variability (sd3) of the land in 2024", cex.main = .8) 
 
-# calculate the pca for the image of 2024
+#calculate the PCA for the image of 2024
 im.pca(fc_2024)
 sentpc_2024 <- im.pca(fc_2024) 
-# PC1 represents 45 % of the variability
-# plot only the first principal component
+#PC1 represents 45 % of the variability
+#plot only the first principal component
 plot(sentpc_2024$PC1, main = "PC1_2024", col = viridisc)
 
-# calculate sd of pc1 in a 3x3 matrix
+#calculate sd of pc1 in a 3x3 matrix
 pc1sd3_2024 <- focal(sentpc_2024$PC1, matrix(1/9,3,3), fun=sd)
 plot(pc1sd3_2024, col=cl2, main = "Variability of the land in 2024 (sd3_PC1)", cex.main = .9)
 
-# multiframe
+#multiframe
 par(mfrow=c(3,2))
 im.plotRGB(after_fc, 2,1,3) # variability of the land after the storm in 2019 using false color 
 #r=red, g=nir, b=green -> the forest is represented in green and the bare soil in purple, to better represent the vegetation
 im.plotRGB(fc_2024, 2,1,3)
-# variability of the land in 2024 using false color
+#variability of the land in 2024 using false color
 plot(sd3_after, col=cl2, main = "Variability of the land after the storm (sd3)", cex.main = .8) 
 plot(sd3_2024, col=cl2, main = "Variability of the land in 2024 (sd3)", cex.main = .8) 
 plot(pc1sd3_after, col=cl2, main = "Variability of the land after the storm (sd3_PC1)", cex.main = .8)
 plot(pc1sd3_2024, col=cl2, main = "Variability of the land in 2024 (sd3_PC1)", cex.main = .8)
-# the difference in variability of the land revealed by the sd3 and pc1 from after the storm and now is visible:
-# more values near zero (in white) in the images from now, representing less variability of the land in those spots,
-# probably because the new vegetation just grown makes the land more uniform.
-# Also, few more spots are visualized in light green color, among them even some that survived the storm. BOSTRICO?
+#the difference in variability of the land revealed by the sd3 and pc1 from after the storm and now is visible:
+#more values near zero (in white) in the images from now, representing less variability of the land in those spots,
+#probably because the new vegetation just grown makes the land more uniform.
+#Also, few more spots are visualized in light green color, among them even some that survived the storm.
 
